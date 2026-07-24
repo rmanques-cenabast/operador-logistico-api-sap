@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/OperadorLogistico.Api/OperadorLogistico.Api.csproj" />
+    <Project Path="src/OperadorLogistico.Application/OperadorLogistico.Application.csproj" />
+    <Project Path="src/OperadorLogistico.Domain/OperadorLogistico.Domain.csproj" />
+    <Project Path="src/OperadorLogistico.Infrastructure.Sap/OperadorLogistico.Infrastructure.Sap.csproj" />
+  </Folder>
+</Solution>

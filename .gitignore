@@ -1,0 +1,58 @@
+## ----------------------------------------------------
+## 🛡️ SEGURIDAD DE CREDENCIALES Y AMBIENTES LOCALES
+## ----------------------------------------------------
+# Archivos de configuración con contraseñas de SAP y Base de Datos local
+src/OperadorLogistico.Api/appsettings.Development.json
+src/OperadorLogistico.Api/appsettings.Local.json
+appsettings.Development.json
+appsettings.Local.json
+
+# Archivos de publicación con variables de entorno del servidor
+publish/
+publish/*
+web.config
+src/OperadorLogistico.Api/web.config
+
+## ----------------------------------------------------
+## 🛠️ COMPILADOS E INTERMEDIOS DE .NET
+## ----------------------------------------------------
+# Carpetas de salida de compilación
+[Bb]in/
+[Oo]bj/
+artifacts/
+
+# Archivos de usuario específicos de desarrollo
+*.user
+*.userosscache
+*.sln.docstates
+
+## ----------------------------------------------------
+## 💻 ENTORNOS DE IDE Y SISTEMA OPERATIVO
+## ----------------------------------------------------
+# Visual Studio
+.vs/
+.vs/*
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.suo
+*.ltx
+*.tmp
+*.vspscc
+*.vssscc
+*.suo
+*.user
+*.suo
+*.metadata
+*.aps
+
+# Rider & VS Code
+.idea/
+.vscode/
+*.RiderParent
+*.RiderParent/*
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
