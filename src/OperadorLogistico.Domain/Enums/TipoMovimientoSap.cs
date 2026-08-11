@@ -21,6 +21,8 @@ public enum TipoMovimientoSap
     // 3. Libre Utilización / Operaciones
     SalidaVentaCliente_601 = 601,
     AnulacionSalidaVenta_602 = 602,
+    DevolucionClienteLibre_655 = 655,
+    AnulacionDevolucionCliente_656 = 656,
     TraspasoAlmacenExterno_647 = 647,
     AnulacionTraspasoExterno_648 = 648,
     TraspasoLibreABloqueado_344 = 344,

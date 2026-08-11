@@ -1,0 +1,148 @@
+
+**** Log file opened by process 41276 at 2026-07-28 13:22:56 (UTC-04:00 Hora est. Sudamérica Pacífico)
+
+SAP .NET Connector 3.1 with file version 3.1.7.0 running on 64-bit .NET Framework 8.0.29
+Program: C:\dev\operador-logistico-api-sap\src\OperadorLogistico.Api\bin\Debug\net8.0\OperadorLogistico.Api.exe
+Thread Name: .NET TP Worker
+Working directory: C:\dev\operador-logistico-api-sap\src\OperadorLogistico.Api
+Trace directory: .\
+Trace encoding: utf-8
+Operating system: Windows 10 Professional 64-bit 
+Processor: 20x AMD64 (or x64)
+SAP release: 789, Kernel release: 789, Kernel patch level: 451
+Hostname: CNBST-83, IP address: 169.254.6.138, IP_v6 address: fe80::6ab7:dadf:f2bf:5f7d
+Locale: es-419 (number decimal separator: ".", number group separator: ",", negative sign: "-")
+
+Default trace level: None
+
+>> Error entry 2026-07-28 13:22:56.306 [Thread 13 (.NET TP Worker)]
+SAP.Middleware.Connector.RfcAbapRuntimeException: A dynamically specified column name is unknown.
+   at SAP.Middleware.Connector.RfcConnection.ThrowRfcErrorMsg() in D:\depot\bas\789_REL\gen\optU\ntamd64\krn\rfc\nco3\krn\rfc\nco3\sapnco\RfcConnection.cs:line 3274
+   at SAP.Middleware.Connector.RfcConnection.ReadBytes(Byte* buffer, Int32 count) in D:\depot\bas\789_REL\gen\optU\ntamd64\krn\rfc\nco3\krn\rfc\nco3\sapnco\RfcConnection.cs:line 1842
+   at SAP.Middleware.Connector.RfcConnection.ReadRfcIDBegin(Int32& length) in D:\depot\bas\789_REL\gen\optU\ntamd64\krn\rfc\nco3\krn\rfc\nco3\sapnco\RfcConnection.cs:line 1965
+   at SAP.Middleware.Connector.RfcConnection.ReadUpTo(RFCGET readState, RfcFunction function, RFCID toRid) in D:\depot\bas\789_REL\gen\optU\ntamd64\krn\rfc\nco3\krn\rfc\nco3\sapnco\RfcConnection.cs:line 2597
+   at SAP.Middleware.Connector.RfcConnection.RfcReceive(RfcFunction function) in D:\depot\bas\789_REL\gen\optU\ntamd64\krn\rfc\nco3\krn\rfc\nco3\sapnco\RfcConnection.cs:line 3282
+   at SAP.Middleware.Connector.RfcFunction.RfcDeserialize(RfcConnection conn, IRfcIOStream stream) in D:\depot\bas\789_REL\gen\optU\ntamd64\krn\rfc\nco3\krn\rfc\nco3\sapnco\RfcFunction.cs:line 557
+   at SAP.Middleware.Connector.RfcFunction.RfcCallReceive(RfcConnection conn, RFCID rid) in D:\depot\bas\789_REL\gen\optU\ntamd64\krn\rfc\nco3\krn\rfc\nco3\sapnco\RfcFunction.cs:line 627
+   at SAP.Middleware.Connector.RfcFunction.RfcCallReceive(RfcConnection conn) in D:\depot\bas\789_REL\gen\optU\ntamd64\krn\rfc\nco3\krn\rfc\nco3\sapnco\RfcFunction.cs:line 576
+   at SAP.Middleware.Connector.RfcFunction.Invoke(RfcDestination destination) in D:\depot\bas\789_REL\gen\optU\ntamd64\krn\rfc\nco3\krn\rfc\nco3\sapnco\RfcFunction.cs:line 251
+   at OperadorLogistico.Infrastructure.Sap.Services.SapStockService.ConsultarStockLoteAsync(ConsultaStockRequestDto request) in C:\dev\operador-logistico-api-sap\src\OperadorLogistico.Infrastructure.Sap\Services\SapStockService.cs:line 47
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+   at OperadorLogistico.Infrastructure.Sap.Services.SapStockService.ConsultarStockLoteAsync(ConsultaStockRequestDto request)
+   at OperadorLogistico.Api.Controllers.InventarioController.GetStock(String material, String centro, String almacen, String lote) in C:\dev\operador-logistico-api-sap\src\OperadorLogistico.Api\Controllers\InventarioController.cs:line 34
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+   at OperadorLogistico.Api.Controllers.InventarioController.GetStock(String material, String centro, String almacen, String lote)
+   at lambda_method2(Closure, Object, Object[])
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeActionMethodAsync()
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeNextActionFilterAsync()
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeNextActionFilterAsync()
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.InvokeFilterPipelineAsync()
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.InvokeAsync()
+   at Microsoft.AspNetCore.Mvc.Routing.ControllerRequestDelegateFactory.<>c__DisplayClass12_0.<CreateRequestDelegate>b__0(HttpContext context)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.HttpsPolicy.HttpsRedirectionMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.HostFiltering.HostFilteringMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequestsAsync[TContext](IHttpApplication`1 application)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequestsAsync[TContext](IHttpApplication`1 application)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.HttpConnection.ProcessRequestsAsync[TContext](IHttpApplication`1 httpApplication)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.HttpConnection.ProcessRequestsAsync[TContext](IHttpApplication`1 httpApplication)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.HttpConnectionMiddleware`1.OnConnectionAsync(ConnectionContext connectionContext)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure.KestrelConnection`1.ExecuteAsync()
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure.KestrelConnection`1.ExecuteAsync()
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure.KestrelConnection`1.System.Threading.IThreadPoolWorkItem.Execute()
+   at System.Threading.ThreadPoolWorkQueue.Dispatch()
+   at System.Threading.PortableThreadPool.WorkerThread.WorkerThreadStart()
+>> Error entry 2026-07-28 13:22:56.386 [Thread 13 (.NET TP Worker)]
+[ASHOST=10.8.0.76 SYSNR=00 SYSID=QAS CLIENT=400 USER=userrfc2 PASSWD=******** LANG=ES POOL_SIZE=5 MAX_POOL_SIZE=10 NAME=QAS_DEST]
+SAP.Middleware.Connector.RfcAbapRuntimeException: A dynamically specified column name is unknown.
+   at SAP.Middleware.Connector.RfcConnection.ThrowRfcErrorMsg() in D:\depot\bas\789_REL\gen\optU\ntamd64\krn\rfc\nco3\krn\rfc\nco3\sapnco\RfcConnection.cs:line 3274
+   at SAP.Middleware.Connector.RfcConnection.ReadBytes(Byte* buffer, Int32 count) in D:\depot\bas\789_REL\gen\optU\ntamd64\krn\rfc\nco3\krn\rfc\nco3\sapnco\RfcConnection.cs:line 1842
+   at SAP.Middleware.Connector.RfcConnection.ReadRfcIDBegin(Int32& length) in D:\depot\bas\789_REL\gen\optU\ntamd64\krn\rfc\nco3\krn\rfc\nco3\sapnco\RfcConnection.cs:line 1965
+   at SAP.Middleware.Connector.RfcConnection.ReadUpTo(RFCGET readState, RfcFunction function, RFCID toRid) in D:\depot\bas\789_REL\gen\optU\ntamd64\krn\rfc\nco3\krn\rfc\nco3\sapnco\RfcConnection.cs:line 2597
+   at SAP.Middleware.Connector.RfcConnection.RfcReceive(RfcFunction function) in D:\depot\bas\789_REL\gen\optU\ntamd64\krn\rfc\nco3\krn\rfc\nco3\sapnco\RfcConnection.cs:line 3282
+   at SAP.Middleware.Connector.RfcFunction.RfcDeserialize(RfcConnection conn, IRfcIOStream stream) in D:\depot\bas\789_REL\gen\optU\ntamd64\krn\rfc\nco3\krn\rfc\nco3\sapnco\RfcFunction.cs:line 557
+   at SAP.Middleware.Connector.RfcFunction.RfcCallReceive(RfcConnection conn, RFCID rid) in D:\depot\bas\789_REL\gen\optU\ntamd64\krn\rfc\nco3\krn\rfc\nco3\sapnco\RfcFunction.cs:line 627
+   at SAP.Middleware.Connector.RfcFunction.RfcCallReceive(RfcConnection conn) in D:\depot\bas\789_REL\gen\optU\ntamd64\krn\rfc\nco3\krn\rfc\nco3\sapnco\RfcFunction.cs:line 576
+   at SAP.Middleware.Connector.RfcFunction.Invoke(RfcDestination destination) in D:\depot\bas\789_REL\gen\optU\ntamd64\krn\rfc\nco3\krn\rfc\nco3\sapnco\RfcFunction.cs:line 251
+   at OperadorLogistico.Infrastructure.Sap.Services.SapStockService.ConsultarStockLoteAsync(ConsultaStockRequestDto request) in C:\dev\operador-logistico-api-sap\src\OperadorLogistico.Infrastructure.Sap\Services\SapStockService.cs:line 47
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+   at OperadorLogistico.Infrastructure.Sap.Services.SapStockService.ConsultarStockLoteAsync(ConsultaStockRequestDto request)
+   at OperadorLogistico.Api.Controllers.InventarioController.GetStock(String material, String centro, String almacen, String lote) in C:\dev\operador-logistico-api-sap\src\OperadorLogistico.Api\Controllers\InventarioController.cs:line 34
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+   at OperadorLogistico.Api.Controllers.InventarioController.GetStock(String material, String centro, String almacen, String lote)
+   at lambda_method2(Closure, Object, Object[])
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeActionMethodAsync()
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeNextActionFilterAsync()
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeNextActionFilterAsync()
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.InvokeFilterPipelineAsync()
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.InvokeAsync()
+   at Microsoft.AspNetCore.Mvc.Routing.ControllerRequestDelegateFactory.<>c__DisplayClass12_0.<CreateRequestDelegate>b__0(HttpContext context)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.HttpsPolicy.HttpsRedirectionMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.HostFiltering.HostFilteringMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequestsAsync[TContext](IHttpApplication`1 application)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequestsAsync[TContext](IHttpApplication`1 application)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.HttpConnection.ProcessRequestsAsync[TContext](IHttpApplication`1 httpApplication)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.HttpConnection.ProcessRequestsAsync[TContext](IHttpApplication`1 httpApplication)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.HttpConnectionMiddleware`1.OnConnectionAsync(ConnectionContext connectionContext)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure.KestrelConnection`1.ExecuteAsync()
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure.KestrelConnection`1.ExecuteAsync()
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure.KestrelConnection`1.System.Threading.IThreadPoolWorkItem.Execute()
+   at System.Threading.ThreadPoolWorkQueue.Dispatch()
+   at System.Threading.PortableThreadPool.WorkerThread.WorkerThreadStart()

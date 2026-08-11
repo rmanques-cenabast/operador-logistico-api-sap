@@ -11,7 +11,9 @@ public class SapDestinationConfiguration : IDestinationConfiguration
         _options = options;
     }
 
-    public event RfcDestinationManager.ConfigurationChangeHandler ConfigurationChanged;
+#pragma warning disable CS0067
+    public event RfcDestinationManager.ConfigurationChangeHandler? ConfigurationChanged;
+#pragma warning restore CS0067
 
     public RfcConfigParameters GetParameters(string destinationName)
     {
