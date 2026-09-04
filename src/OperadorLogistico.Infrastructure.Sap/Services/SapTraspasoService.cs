@@ -52,7 +52,7 @@ public class SapTraspasoService : ISapTraspasoService
                     row.SetValue("PLANT", item.DesdeCentro);
                     row.SetValue("STGE_LOC", item.DesdeAlmacen);
                     row.SetValue("MOVE_TYPE", item.ClaseMovimiento);
-                    row.SetValue("ENTRY_QNT", item.Cantidad);
+                    row.SetValue("ENTRY_QNT", item.Cantidad.ToString(System.Globalization.CultureInfo.InvariantCulture));
                     row.SetValue("ENTRY_UOM", item.UnidadMedida);
 
                     // Imputación de Centro Destino (haciaCentro)

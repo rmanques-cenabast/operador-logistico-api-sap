@@ -56,3 +56,6 @@ artifacts/
 # Sistema operativo
 .DS_Store
 Thumbs.db
+
+#.log
+dev_nco_rfc.log

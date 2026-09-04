@@ -57,7 +57,7 @@ public class SapAjusteBajaService : ISapAjusteBajaService
                     row.SetValue("PLANT", item.Centro);
                     row.SetValue("STGE_LOC", item.Almacen);
                     row.SetValue("MOVE_TYPE", item.ClaseMovimiento);
-                    row.SetValue("ENTRY_QNT", item.Cantidad);
+                    row.SetValue("ENTRY_QNT", item.Cantidad.ToString(System.Globalization.CultureInfo.InvariantCulture));
                     row.SetValue("ENTRY_UOM", item.UnidadMedida);
 
                     if (!string.IsNullOrEmpty(item.CentroCosto))

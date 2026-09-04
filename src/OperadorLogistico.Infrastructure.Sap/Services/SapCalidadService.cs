@@ -43,7 +43,7 @@ public class SapCalidadService : ISapCalidadService
                 row.SetValue("STGE_LOC", item.AlmacenOrigen);
                 row.SetValue("MOVE_STLOC", item.AlmacenDestino); // Almacén destino en traspasos
                 row.SetValue("MOVE_TYPE", item.ClaseMovimiento);
-                row.SetValue("ENTRY_QNT", item.Cantidad);
+                row.SetValue("ENTRY_QNT", item.Cantidad.ToString(System.Globalization.CultureInfo.InvariantCulture));
                 row.SetValue("ENTRY_UOM", item.UnidadMedida);
 
                 if (!string.IsNullOrEmpty(item.Lote)) row.SetValue("BATCH", item.Lote);

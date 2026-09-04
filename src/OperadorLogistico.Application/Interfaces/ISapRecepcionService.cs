@@ -6,4 +6,5 @@ namespace OperadorLogistico.Application.Interfaces;
 public interface ISapRecepcionService
 {
     Task<SapMovimientoResponseDto> ProcesarRecepcionAsync(RecepcionPedidoRequestDto request);
+    Task<PedidoCompraLiberacionDto> ConsultarEstadoLiberacionAsync(string numeroPedidoCompra);
 }

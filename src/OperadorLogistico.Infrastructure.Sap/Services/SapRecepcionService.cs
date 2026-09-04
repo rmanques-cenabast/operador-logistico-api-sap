@@ -41,7 +41,7 @@ public class SapRecepcionService : ISapRecepcionService
                     try
                     {
                         IRfcFunction poDetail = repository.CreateFunction("BAPI_PO_GETDETAIL");
-                        poDetail.SetValue("PURCHASEORDER", request.NumeroPedidoCompra.PadLeft(10, '0'));
+                        poDetail.SetValue("PURCHASEORDER", item.NumeroPedidoCompra.PadLeft(10, '0'));
                         poDetail.SetValue("ITEMS", "X"); // Activa la lectura de ítems
                         
                         poDetail.Invoke(destination);
@@ -54,9 +54,16 @@ public class SapRecepcionService : ISapRecepcionService
                             var poItemRow = poItems[j];
                             if (poItemRow.GetString("PO_ITEM") == itemPosFormatted)
                             {
-                                // 1. Extraer la unidad de medida oficial de SAP del Pedido (ej: 'KI')
+                                // 1. Extraer datos oficiales de SAP del Pedido (Unidad y Centro)
                                 string sapUnit = poItemRow.GetString("UNIT");
+                                string sapPlant = poItemRow.GetString("PLANT");
                                 
+                                // Sobrescribimos el Centro del OL con el Centro real de la OC en SAP
+                                if (!string.IsNullOrEmpty(sapPlant))
+                                {
+                                    item.Centro = sapPlant;
+                                }
+
                                 // 2. Obtener factores de conversión utilizando las columnas descubiertas en el escáner (CONV_NUM1 y CONV_DEN1)
                                 decimal convNum = 1;
                                 decimal convDen = 1;
@@ -67,23 +74,25 @@ public class SapRecepcionService : ISapRecepcionService
                                 if (!string.IsNullOrEmpty(sapUnit))
                                 {
                                     _logger.LogInformation("BAPI_PO_GETDETAIL - Resolución de Unidad: Pedido {Pedido} Pos {Pos} en SAP usa {Unidad}. Factores: Num={Num}, Den={Den}", 
-                                        request.NumeroPedidoCompra, item.Posicion, sapUnit, convNum, convDen);
+                                        item.NumeroPedidoCompra, item.Posicion, sapUnit, convNum, convDen);
 
-                                    // Si la unidad de la OC es distinta a la del OL (ej: el OL manda UN y la OC está en KI)
-                                    // y los factores de conversión son válidos (> 0)
-                                    if (sapUnit != item.UnidadMedida && convNum > 0 && convDen > 0)
+                                    // Si el OL NO envió unidad, asumimos que la cantidad ya viene en la unidad del Pedido,
+                                    // por ende solo adoptamos la unidad sin hacer conversiones matemáticas.
+                                    if (string.IsNullOrEmpty(item.UnidadMedida))
                                     {
-                                        // Aplicar conversión: Cantidad en unidad de pedido = Cantidad OL * (Denominador / Numerador)
-                                        decimal cantidadConvertida = item.Cantidad * (convDen / convNum);
+                                        item.UnidadMedida = sapUnit;
+                                        _logger.LogInformation("OL no envió unidad. Asumiendo unidad de la OC: {Unidad}", sapUnit);
+                                    }
+                                    // Si el OL sí envió una unidad distinta a la de la OC, y hay factores de conversión
+                                    else if (sapUnit != item.UnidadMedida && convNum > 0 && convDen > 0)
+                                    {
+                                        // Aplicar conversión y redondear a 3 decimales máximo (límite estricto de BCD en SAP)
+                                        decimal cantidadConvertida = Math.Round(item.Cantidad * (convDen / convNum), 3);
                                         
                                         _logger.LogInformation("Aplicando conversión: {CantOriginal} {UnOriginal} -> {CantConvertida} {UnConvertida}", 
                                             item.Cantidad, item.UnidadMedida, cantidadConvertida, sapUnit);
                                         
                                         item.Cantidad = cantidadConvertida;
-                                        item.UnidadMedida = sapUnit;
-                                    }
-                                    else
-                                    {
                                         item.UnidadMedida = sapUnit;
                                     }
                                 }
@@ -94,7 +103,7 @@ public class SapRecepcionService : ISapRecepcionService
                     catch (Exception poEx)
                     {
                         _logger.LogWarning(poEx, "No se pudo auto-resolver o convertir la unidad de la OC {OC} con BAPI_PO_GETDETAIL. Se continuará con los valores originales.",
-                            request.NumeroPedidoCompra);
+                            item.NumeroPedidoCompra);
                     }
                 }
 
@@ -127,15 +136,20 @@ public class SapRecepcionService : ISapRecepcionService
                 {
                     IRfcStructure row = itemsTable.Metadata.LineType.CreateStructure();
                     
-                    row.SetValue("MATERIAL", item.Material.PadLeft(18, '0')); // Formato numérico de material SAP de 18 caracteres
+                    // Limpiar el prefijo 'FI' que viene en el Excel/Preaviso para que SAP pueda leer el código real.
+                    string materialLimpio = item.Material.StartsWith("FI") ? item.Material.Substring(2) : item.Material;
+
+                    // Formato SAP: si es puramente numérico, rellenar a 18 caracteres con ceros. Si es alfanumérico, pasarlo intacto.
+                    string materialSaneado = materialLimpio.All(char.IsDigit) ? materialLimpio.PadLeft(18, '0') : materialLimpio;
+                    row.SetValue("MATERIAL", materialSaneado);
                     row.SetValue("PLANT", item.Centro);
                     row.SetValue("STGE_LOC", item.Almacen);
                     row.SetValue("MOVE_TYPE", item.ClaseMovimiento);
-                    row.SetValue("ENTRY_QNT", item.Cantidad);
+                    row.SetValue("ENTRY_QNT", item.Cantidad.ToString(System.Globalization.CultureInfo.InvariantCulture));
                     row.SetValue("ENTRY_UOM", item.UnidadMedida);
                     
                     // Indicador y datos del Pedido de Compra
-                    row.SetValue("PO_NUMBER", request.NumeroPedidoCompra.PadLeft(10, '0'));
+                    row.SetValue("PO_NUMBER", item.NumeroPedidoCompra.PadLeft(10, '0'));
                     // Rellenar la posición del pedido rellenando con ceros a la izquierda (ej: "00010" para posición 10)
                     row.SetValue("PO_ITEM", item.Posicion.ToString().PadLeft(5, '0'));
                     row.SetValue("MVT_IND", "B"); // B = Pedido de compra
@@ -143,6 +157,11 @@ public class SapRecepcionService : ISapRecepcionService
                     if (!string.IsNullOrEmpty(item.Lote))
                     {
                         row.SetValue("BATCH", item.Lote);
+                    }
+
+                    if (item.FechaVencimiento.HasValue)
+                    {
+                        row.SetValue("EXPIRYDATE", item.FechaVencimiento.Value.ToString("yyyyMMdd"));
                     }
 
                     if (!string.IsNullOrEmpty(item.TextoPosicion))
@@ -228,6 +247,140 @@ public class SapRecepcionService : ISapRecepcionService
                 Tipo = "A",
                 Mensaje = $"Error de comunicación/ejecución SAP: {ex.Message}"
             });
+        }
+
+        return response;
+    }
+
+    public async Task<PedidoCompraLiberacionDto> ConsultarEstadoLiberacionAsync(string numeroPedidoCompra)
+    {
+        var response = new PedidoCompraLiberacionDto
+        {
+            NumeroPedidoCompra = numeroPedidoCompra
+        };
+
+        try
+        {
+            var destination = _connectionFactory.GetDestination();
+            var repository = destination.Repository;
+            string poFormatted = numeroPedidoCompra.Trim().PadLeft(10, '0');
+
+            // 1. Obtener datos exactos de liberación directamente de la tabla EKKO
+            try
+            {
+                IRfcFunction rfcReadTable = repository.CreateFunction("RFC_READ_TABLE");
+                rfcReadTable.SetValue("QUERY_TABLE", "EKKO");
+                rfcReadTable.SetValue("DELIMITER", "|");
+
+                IRfcTable fieldsTable = rfcReadTable.GetTable("FIELDS");
+                fieldsTable.Append(); fieldsTable.SetValue("FIELDNAME", "EBELN");
+                fieldsTable.Append(); fieldsTable.SetValue("FIELDNAME", "BSART");
+                fieldsTable.Append(); fieldsTable.SetValue("FIELDNAME", "LIFNR");
+                fieldsTable.Append(); fieldsTable.SetValue("FIELDNAME", "AEDAT");
+                fieldsTable.Append(); fieldsTable.SetValue("FIELDNAME", "FRGGR");
+                fieldsTable.Append(); fieldsTable.SetValue("FIELDNAME", "FRGSX");
+                fieldsTable.Append(); fieldsTable.SetValue("FIELDNAME", "FRGKE");
+                fieldsTable.Append(); fieldsTable.SetValue("FIELDNAME", "FRGZU");
+
+                IRfcTable optionsTable = rfcReadTable.GetTable("OPTIONS");
+                optionsTable.Append();
+                optionsTable.SetValue("TEXT", $"EBELN = '{poFormatted}'");
+
+                rfcReadTable.Invoke(destination);
+
+                IRfcTable dataTable = rfcReadTable.GetTable("DATA");
+                if (dataTable != null && dataTable.RowCount > 0)
+                {
+                    string rawLine = dataTable[0].GetString("WA");
+                    string[] parts = rawLine.Split('|');
+                    
+                    if (parts.Length >= 8)
+                    {
+                        response.ClaseDocumento = parts[1].Trim();
+                        response.RutProveedor = parts[2].Trim();
+                        string aedat = parts[3].Trim();
+                        if (aedat.Length == 8)
+                        {
+                            response.FechaCreacion = $"{aedat.Substring(6, 2)}/{aedat.Substring(4, 2)}/{aedat.Substring(0, 4)}";
+                        }
+                        response.GrupoLiberacion = parts[4].Trim();
+                        response.EstrategiaLiberacion = parts[5].Trim();
+                        response.CodigoLiberacion = parts[6].Trim();
+                        string frgzu = parts[7].Trim();
+
+                        _logger.LogInformation("SAP EKKO para {Pedido}: Grupo={Grupo}, Estrategia={Strat}, Ind={Ind}, EstadoFirmas={Frgzu}",
+                            numeroPedidoCompra, response.GrupoLiberacion, response.EstrategiaLiberacion, response.CodigoLiberacion, frgzu);
+
+                        // Si tiene estrategia de liberación
+                        if (!string.IsNullOrEmpty(response.EstrategiaLiberacion) || !string.IsNullOrEmpty(response.GrupoLiberacion))
+                        {
+                            // En SAP: 'X' o 'B' es Bloqueado / Pendiente. 'L' o '2' o espacio sin bloquear es Liberado
+                            if (response.CodigoLiberacion == "X" || response.CodigoLiberacion == "B" || response.CodigoLiberacion != "L")
+                            {
+                                response.EstaLiberado = false;
+                                response.EstadoLiberacionTexto = response.CodigoLiberacion == "X" ? "BLOQUEADO (Pendiente de firmas)" : "PENDIENTE DE LIBERACIÓN";
+                            }
+                            else
+                            {
+                                response.EstaLiberado = true;
+                                response.EstadoLiberacionTexto = "LIBERADO TOTALMENTE";
+                            }
+                        }
+                        else
+                        {
+                            response.EstaLiberado = true;
+                            response.EstadoLiberacionTexto = "LIBERADO (Sin estrategia requerida)";
+                        }
+
+                        // Mapear los 4 niveles para la estrategia (PP, LP, CP, OI)
+                        var codigosEstrategia = new List<(string Codigo, string Descripcion)>
+                        {
+                            ("PP", "Plataforma Pedido"),
+                            ("LP", "Logística"),
+                            ("CP", "Compras"),
+                            ("OI", "OIRS")
+                        };
+
+                        for (int i = 0; i < codigosEstrategia.Count; i++)
+                        {
+                            var item = codigosEstrategia[i];
+                            // Si en frgzu el bit correspondiente está marcado (ej. 'X' o '1' o longitud)
+                            bool aprobado = !string.IsNullOrEmpty(frgzu) && frgzu.Length > i && (frgzu[i] == 'X' || frgzu[i] == '1');
+                            
+                            response.NivelesLiberacion.Add(new NivelLiberacionDto
+                            {
+                                Codigo = item.Codigo,
+                                Descripcion = item.Descripcion,
+                                Aprobado = response.EstaLiberado ? true : aprobado
+                            });
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning("RFC_READ_TABLE EKKO advertencia para {Pedido}: {Msg}", numeroPedidoCompra, ex.Message);
+            }
+
+            // Si los niveles aún están vacíos, agregar los 4 niveles por defecto
+            if (response.NivelesLiberacion.Count == 0)
+            {
+                response.NivelesLiberacion.Add(new NivelLiberacionDto { Codigo = "PP", Descripcion = "Plataforma Pedido", Aprobado = response.EstaLiberado });
+                response.NivelesLiberacion.Add(new NivelLiberacionDto { Codigo = "LP", Descripcion = "Logística", Aprobado = response.EstaLiberado });
+                response.NivelesLiberacion.Add(new NivelLiberacionDto { Codigo = "CP", Descripcion = "Compras", Aprobado = response.EstaLiberado });
+                response.NivelesLiberacion.Add(new NivelLiberacionDto { Codigo = "OI", Descripcion = "OIRS", Aprobado = response.EstaLiberado });
+            }
+
+            response.Exitoso = true;
+            response.Mensaje = response.EstaLiberado 
+                ? "El Pedido de Compra se encuentra liberado y autorizado para recepción."
+                : "El Pedido de Compra requiere liberación previa en SAP por el área correspondiente.";
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error consultando liberación de Pedido de Compra {Pedido}", numeroPedidoCompra);
+            response.Exitoso = false;
+            response.Mensaje = $"Error al consultar estado en SAP: {ex.Message}";
         }
 
         return response;
