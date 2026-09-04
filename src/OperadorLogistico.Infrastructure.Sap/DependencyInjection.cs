@@ -38,6 +38,7 @@ public static class DependencyInjection
         services.AddScoped<ISapTraspasoService, SapTraspasoService>();
         services.AddScoped<ISapAjusteBajaService, SapAjusteBajaService>();
         services.AddScoped<ISapStockService, SapStockService>();
+        services.AddScoped<ISapAnexoService, SapAnexoService>();
 
         return services;
     }
