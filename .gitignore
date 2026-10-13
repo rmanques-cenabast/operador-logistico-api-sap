@@ -3,6 +3,7 @@
 ## ----------------------------------------------------
 # Archivos de configuración con contraseñas de SAP y Base de Datos local
 src/OperadorLogistico.Api/appsettings.Development.json
+src/OperadorLogistico.Api/appsettings.json
 src/OperadorLogistico.Api/appsettings.Local.json
 appsettings.Development.json
 appsettings.Local.json

@@ -118,6 +118,10 @@ public class SapRecepcionService : ISapRecepcionService
                 header.SetValue("PSTNG_DATE", fechaContabilizacion.ToString("yyyyMMdd"));
                 header.SetValue("DOC_DATE", fechaDocumento.ToString("yyyyMMdd"));
                 header.SetValue("HEADER_TXT", request.TextoCabecera);
+                if (!string.IsNullOrWhiteSpace(request.NumeroReferencia))
+                {
+                    header.SetValue("REF_DOC_NO", request.NumeroReferencia.Trim());
+                }
 
                 // 2. Código de Transacción MIGO (GOODSMVT_CODE)
                 IRfcStructure code = bapiCreate.GetStructure("GOODSMVT_CODE");
@@ -135,9 +139,7 @@ public class SapRecepcionService : ISapRecepcionService
                 foreach (var item in request.Items)
                 {
                     IRfcStructure row = itemsTable.Metadata.LineType.CreateStructure();
-                    
-                    // Limpiar el prefijo 'FI' que viene en el Excel/Preaviso para que SAP pueda leer el código real.
-                    string materialLimpio = item.Material.StartsWith("FI") ? item.Material.Substring(2) : item.Material;
+                    string materialLimpio = item.Material.Trim();
 
                     // Formato SAP: si es puramente numérico, rellenar a 18 caracteres con ceros. Si es alfanumérico, pasarlo intacto.
                     string materialSaneado = materialLimpio.All(char.IsDigit) ? materialLimpio.PadLeft(18, '0') : materialLimpio;
@@ -156,7 +158,12 @@ public class SapRecepcionService : ISapRecepcionService
                     
                     if (!string.IsNullOrEmpty(item.Lote))
                     {
-                        row.SetValue("BATCH", item.Lote);
+                        string loteSap = item.Lote.Trim();
+                        if (loteSap.Length > 10)
+                        {
+                            loteSap = loteSap.Substring(loteSap.Length - 10);
+                        }
+                        row.SetValue("BATCH", loteSap);
                     }
 
                     if (item.FechaVencimiento.HasValue)

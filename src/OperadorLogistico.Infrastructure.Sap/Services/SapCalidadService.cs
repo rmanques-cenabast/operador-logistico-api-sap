@@ -46,7 +46,11 @@ public class SapCalidadService : ISapCalidadService
                 row.SetValue("ENTRY_QNT", item.Cantidad.ToString(System.Globalization.CultureInfo.InvariantCulture));
                 row.SetValue("ENTRY_UOM", item.UnidadMedida);
 
-                if (!string.IsNullOrEmpty(item.Lote)) row.SetValue("BATCH", item.Lote);
+                if (!string.IsNullOrEmpty(item.Lote))
+                {
+                    string lote = item.Lote.Trim();
+                    row.SetValue("BATCH", lote.Length > 10 ? lote.Substring(lote.Length - 10) : lote);
+                }
                 itemsTable.Append(row);
             }
 
@@ -92,7 +96,11 @@ public class SapCalidadService : ISapCalidadService
                     row.SetValue("COSTCENTER", item.CentroCosto.PadLeft(10, '0'));
                 }
 
-                if (!string.IsNullOrEmpty(item.Lote)) row.SetValue("BATCH", item.Lote);
+                if (!string.IsNullOrEmpty(item.Lote))
+                {
+                    string lote = item.Lote.Trim();
+                    row.SetValue("BATCH", lote.Length > 10 ? lote.Substring(lote.Length - 10) : lote);
+                }
                 itemsTable.Append(row);
             }
 

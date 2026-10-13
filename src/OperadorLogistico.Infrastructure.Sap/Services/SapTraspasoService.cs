@@ -73,16 +73,18 @@ public class SapTraspasoService : ISapTraspasoService
                         row.SetValue("MOVE_MAT", item.MaterialDestino.PadLeft(18, '0'));
                     }
 
-                    // Lotes (desdeLote / haciaLote)
+                    // Lotes (desdeLote / haciaLote) con longitud SAP CHAR(10)
                     if (!string.IsNullOrEmpty(item.DesdeLote))
                     {
-                        row.SetValue("BATCH", item.DesdeLote);
+                        string desde = item.DesdeLote.Trim();
+                        row.SetValue("BATCH", desde.Length > 10 ? desde.Substring(desde.Length - 10) : desde);
                     }
                     
                     // En BAPI_GOODSMVT_CREATE el lote de destino se mapea en MOVE_BATCH
                     if (!string.IsNullOrEmpty(item.HaciaLote))
                     {
-                        row.SetValue("MOVE_BATCH", item.HaciaLote); 
+                        string hacia = item.HaciaLote.Trim();
+                        row.SetValue("MOVE_BATCH", hacia.Length > 10 ? hacia.Substring(hacia.Length - 10) : hacia); 
                     }
 
                     // Asignación del Estado/Tipo de Stock Destino (STGE_TYPE)

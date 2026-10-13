@@ -65,7 +65,11 @@ public class SapAjusteBajaService : ISapAjusteBajaService
                         row.SetValue("COSTCENTER", item.CentroCosto.PadLeft(10, '0'));
                     }
 
-                    if (!string.IsNullOrEmpty(item.Lote)) row.SetValue("BATCH", item.Lote);
+                    if (!string.IsNullOrEmpty(item.Lote))
+                    {
+                        string lote = item.Lote.Trim();
+                        row.SetValue("BATCH", lote.Length > 10 ? lote.Substring(lote.Length - 10) : lote);
+                    }
                     itemsTable.Append(row);
                 }
 
