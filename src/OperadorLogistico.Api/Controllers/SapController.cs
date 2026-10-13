@@ -25,7 +25,7 @@ public class SapController : ControllerBase
         return Ok(new
         {
             Status = "Online",
-            Timestamp = DateTime.UtcNow,
+            Timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
             SapStatus = sapStatus
         });
     }
@@ -42,7 +42,7 @@ public class SapController : ControllerBase
         {
             Bapi = bapiName.ToUpper(),
             Detalle = resultado,
-            Timestamp = DateTime.UtcNow
+            Timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
         });
     }
 }
