@@ -73,18 +73,20 @@ public class SapTraspasoService : ISapTraspasoService
                         row.SetValue("MOVE_MAT", item.MaterialDestino.PadLeft(18, '0'));
                     }
 
-                    // Lotes (desdeLote / haciaLote) con longitud SAP CHAR(10)
+                    // Lotes (desdeLote / haciaLote) normalizados a CHAR(10) para SAP
                     if (!string.IsNullOrEmpty(item.DesdeLote))
                     {
                         string desde = item.DesdeLote.Trim();
-                        row.SetValue("BATCH", desde.Length > 10 ? desde.Substring(desde.Length - 10) : desde);
+                        if (desde.Length > 10) desde = desde.Substring(desde.Length - 10);
+                        row.SetValue("BATCH", desde);
                     }
                     
                     // En BAPI_GOODSMVT_CREATE el lote de destino se mapea en MOVE_BATCH
                     if (!string.IsNullOrEmpty(item.HaciaLote))
                     {
                         string hacia = item.HaciaLote.Trim();
-                        row.SetValue("MOVE_BATCH", hacia.Length > 10 ? hacia.Substring(hacia.Length - 10) : hacia); 
+                        if (hacia.Length > 10) hacia = hacia.Substring(hacia.Length - 10);
+                        row.SetValue("MOVE_BATCH", hacia); 
                     }
 
                     // Asignación del Estado/Tipo de Stock Destino (STGE_TYPE)
@@ -92,6 +94,25 @@ public class SapTraspasoService : ISapTraspasoService
                     if (!string.IsNullOrEmpty(item.TipoStockDestino))
                     {
                         row.SetValue("STGE_TYPE", item.TipoStockDestino);
+                    }
+
+                    // Asignación de Texto de Posición (ITEM_TEXT) y Motivo SAP (MOVE_REAS)
+                    if (!string.IsNullOrEmpty(item.Motivo))
+                    {
+                        string movMotivo = item.Motivo.Trim();
+                        if (int.TryParse(movMotivo, out int mInt))
+                        {
+                            row.SetValue("MOVE_REAS", mInt.ToString("D4"));
+                        }
+                        else
+                        {
+                            row.SetValue("ITEM_TEXT", movMotivo.Length > 50 ? movMotivo.Substring(0, 50) : movMotivo);
+                        }
+                    }
+                    
+                    if (item.ClaseMovimiento == "350" && string.IsNullOrEmpty(row.GetString("MOVE_REAS")))
+                    {
+                        row.SetValue("MOVE_REAS", "0001");
                     }
 
                     itemsTable.Append(row);

@@ -37,8 +37,15 @@ public class SapStockService : ISapStockService
             optRow1.SetValue("TEXT", $"MATNR = '{request.Material.PadLeft(18, '0')}' AND WERKS = '{request.Centro}'");
             options.Append(optRow1);
             
+            // Normalizar lote a CHAR(10) si viene un lote largo del WMS
+            string loteLimpio = request.Lote?.Trim() ?? string.Empty;
+            if (loteLimpio.Length > 10)
+            {
+                loteLimpio = loteLimpio.Substring(loteLimpio.Length - 10);
+            }
+
             IRfcStructure optRow2 = options.Metadata.LineType.CreateStructure();
-            optRow2.SetValue("TEXT", $" AND LGORT = '{request.Almacen}' AND CHARG = '{request.Lote}'");
+            optRow2.SetValue("TEXT", $" AND LGORT = '{request.Almacen}' AND CHARG = '{loteLimpio}'");
             options.Append(optRow2);
 
             IRfcTable fields = rfcReadTable.GetTable("FIELDS");

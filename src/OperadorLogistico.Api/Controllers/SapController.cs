@@ -45,4 +45,23 @@ public class SapController : ControllerBase
             Timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
         });
     }
+
+    /// <summary>
+    /// Consulta registros crudos de una tabla SAP mediante RFC_READ_TABLE (para diagnóstico).
+    /// </summary>
+    [HttpGet("query-table")]
+    public async Task<IActionResult> QueryTable(
+        [FromQuery] string table, 
+        [FromQuery] string fields = "", 
+        [FromQuery] string where = "", 
+        [FromQuery] int limit = 20)
+    {
+        var rows = await _sapStatusService.QueryTableAsync(table, fields, where, limit);
+        return Ok(new
+        {
+            Table = table.ToUpper(),
+            Count = rows.Count,
+            Rows = rows
+        });
+    }
 }

@@ -19,7 +19,8 @@ public class SalidasController : ControllerBase
 
     /// <summary>
     /// Consulta y descarga las entregas de salida (VL01N) generadas en SAP pendientes de pickeo/despacho.
-    /// Parámetro por defecto: últimos 3 meses hacia atrás.
+    /// fechaDesde y fechaHasta filtran la fecha de entrega SAP (LFDAT), incluyendo ambos extremos.
+    /// Sin fechas explicitas, el rango es 01-01-2026 a 31-07-2026.
     /// </summary>
     [HttpGet("entregas-pendientes")]
     [ProducesResponseType(typeof(ConsultaEntregasResponseDto), 200)]
@@ -28,18 +29,29 @@ public class SalidasController : ControllerBase
         [FromQuery] DateTime? fechaHasta, 
         [FromQuery] string? centro, 
         [FromQuery] string? almacen,
-        [FromQuery] bool? soloPendientes)
+        [FromQuery] bool? soloPendientes,
+        [FromQuery] string? canal,
+        [FromQuery] string? orgVenta,
+        [FromQuery] int desplazamiento = 0)
     {
+        if (desplazamiento < 0) return BadRequest("desplazamiento debe ser mayor o igual a cero.");
         var request = new ConsultaEntregasRequestDto
         {
             FechaDesde = fechaDesde ?? new DateTime(2026, 1, 1),
             FechaHasta = fechaHasta ?? new DateTime(2026, 7, 31),
             Centro = string.IsNullOrWhiteSpace(centro) ? "6000" : centro,
             Almacen = almacen,
-            SoloPendientes = soloPendientes ?? true
+            SoloPendientes = soloPendientes ?? true,
+            Canal = canal,
+            Desplazamiento = desplazamiento,
+            OrganizacionVenta = orgVenta
         };
 
         var result = await _salidaService.ConsultarEntregasSalidaAsync(request);
+        if (!result.Exitoso)
+        {
+            return StatusCode(502, result);
+        }
         return Ok(result);
     }
 
@@ -56,6 +68,13 @@ public class SalidasController : ControllerBase
         {
             return BadRequest(result);
         }
+        return Ok(result);
+    }
+
+    [HttpGet("debug/{vbeln}")]
+    public async Task<IActionResult> DebugEntrega(string vbeln)
+    {
+        var result = await _salidaService.DebugEntregaAsync(vbeln);
         return Ok(result);
     }
 }

@@ -68,7 +68,8 @@ public class SapAjusteBajaService : ISapAjusteBajaService
                     if (!string.IsNullOrEmpty(item.Lote))
                     {
                         string lote = item.Lote.Trim();
-                        row.SetValue("BATCH", lote.Length > 10 ? lote.Substring(lote.Length - 10) : lote);
+                        if (lote.Length > 10) lote = lote.Substring(lote.Length - 10);
+                        row.SetValue("BATCH", lote);
                     }
                     itemsTable.Append(row);
                 }

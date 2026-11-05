@@ -7,4 +7,5 @@ public interface ISapSalidaService
 {
     Task<ConsultaEntregasResponseDto> ConsultarEntregasSalidaAsync(ConsultaEntregasRequestDto request);
     Task<SapMovimientoResponseDto> ContabilizarSalidaMercanciasAsync(ConfirmacionDespachoRequestDto request);
+    Task<object> DebugEntregaAsync(string vbeln);
 }

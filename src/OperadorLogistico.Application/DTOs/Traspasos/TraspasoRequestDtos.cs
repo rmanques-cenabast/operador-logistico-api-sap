@@ -21,6 +21,9 @@ public class TraspasoItemDto
     // Campo para definir el estado de stock destino (para traspasos a bloqueado o calidad)
     // Acepta valores como "S" (Bloqueado), "X" (Control Calidad) o "" (Libre Utilización)
     public string? TipoStockDestino { get; set; }
+
+    // Motivo de movimiento (MOVE_REAS en SAP, ej: 0001)
+    public string? Motivo { get; set; }
 }
 
 public class TraspasoRequestDto

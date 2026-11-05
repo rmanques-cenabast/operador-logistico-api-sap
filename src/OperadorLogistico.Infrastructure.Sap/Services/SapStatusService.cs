@@ -96,4 +96,86 @@ public class SapStatusService : ISapStatusService
             });
         }
     }
+
+    public Task<List<string>> QueryTableAsync(string tableName, string fields, string where = "", int rowCount = 20)
+    {
+        var result = new List<string>();
+        try
+        {
+            var destination = _connectionFactory.GetDestination();
+            var repository = destination.Repository;
+            IRfcFunction rfc = repository.CreateFunction("RFC_READ_TABLE");
+            rfc.SetValue("QUERY_TABLE", tableName.ToUpper());
+            rfc.SetValue("DELIMITER", "|");
+            rfc.SetValue("ROWCOUNT", rowCount);
+
+            if (!string.IsNullOrWhiteSpace(where))
+            {
+                IRfcTable opt = rfc.GetTable("OPTIONS");
+                var lines = SplitWhereClause(where, 65);
+                foreach (var line in lines)
+                {
+                    IRfcStructure row = opt.Metadata.LineType.CreateStructure();
+                    row.SetValue("TEXT", line);
+                    opt.Append(row);
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(fields))
+            {
+                IRfcTable flds = rfc.GetTable("FIELDS");
+                foreach (var f in fields.Split(','))
+                {
+                    IRfcStructure fRow = flds.Metadata.LineType.CreateStructure();
+                    fRow.SetValue("FIELDNAME", f.Trim().ToUpper());
+                    flds.Append(fRow);
+                }
+            }
+
+            rfc.Invoke(destination);
+            IRfcTable data = rfc.GetTable("DATA");
+            for (int i = 0; i < data.RowCount; i++)
+            {
+                result.Add(data[i].GetString("WA"));
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error en QueryTableAsync({Table})", tableName);
+            result.Add($"ERROR: {ex.Message}");
+        }
+        return Task.FromResult(result);
+    }
+
+    private static List<string> SplitWhereClause(string where, int maxLen = 65)
+    {
+        var result = new List<string>();
+        var rawLines = where.Replace("\r", "").Split('\n');
+        foreach (var raw in rawLines)
+        {
+            if (string.IsNullOrWhiteSpace(raw)) continue;
+            var words = raw.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            string current = "";
+            foreach (var w in words)
+            {
+                if ((current + " " + w).Trim().Length <= maxLen)
+                {
+                    current = string.IsNullOrEmpty(current) ? w : $"{current} {w}";
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(current))
+                    {
+                        result.Add(current);
+                    }
+                    current = w;
+                }
+            }
+            if (!string.IsNullOrEmpty(current))
+            {
+                result.Add(current);
+            }
+        }
+        return result;
+    }
 }

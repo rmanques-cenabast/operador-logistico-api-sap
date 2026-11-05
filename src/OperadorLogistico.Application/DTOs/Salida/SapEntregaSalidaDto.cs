@@ -12,6 +12,7 @@ public class SapEntregaSalidaItemDto
     public string Almacen { get; set; } = "6001";
     public string? Lote { get; set; }
     public string? UbicacionSugerida { get; set; }
+    public string? DocModelo { get; set; }
     public string EstadoItem { get; set; } = "PENDIENTE";
 }
 
@@ -19,11 +20,17 @@ public class SapEntregaSalidaDto
 {
     public string NumeroEntrega { get; set; } = string.Empty;
     public string PedidoVenta { get; set; } = string.Empty;
+    public string? DocModelo { get; set; }
+    public string? CodigoDestinatario { get; set; }
+    public string? Solicitante { get; set; }
     public string Destinatario { get; set; } = string.Empty;
     public string DireccionDestino { get; set; } = string.Empty;
     public string Comuna { get; set; } = string.Empty;
     public string Ciudad { get; set; } = "SANTIAGO";
     public string Prioridad { get; set; } = "NORMAL";
+    public string Canal { get; set; } = "INT"; // 'INT' o 'FP'
+    public string OrganizacionVenta { get; set; } = "1000"; // '5000', '1000', '3000'
+    public string TipoDestinatario { get; set; } = "ESTABLECIMIENTO SALUD"; // 'HOSPITAL', 'CESFAM / APS', 'MUNICIPALIDAD', 'FARMACIA PRIVADA'
     public DateTime FechaCreacion { get; set; }
     public DateTime FechaCompromiso { get; set; }
     public string Estado { get; set; } = "PENDIENTE_PICKING";

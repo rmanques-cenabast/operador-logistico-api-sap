@@ -5,6 +5,10 @@ namespace OperadorLogistico.Application.DTOs.Salida;
 public class ConsultaEntregasResponseDto
 {
     public bool Exitoso { get; set; } = true;
+    public int SiguienteDesplazamiento { get; set; }
+    public bool HayMas { get; set; }
+    public int LeidasSap { get; set; }
+    public int TamanoBloque { get; set; } = 100;
     public int TotalEntregas { get; set; }
     public DateTime FechaDesde { get; set; }
     public DateTime FechaHasta { get; set; }
